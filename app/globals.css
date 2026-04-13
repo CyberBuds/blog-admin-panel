@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #f8fafc;
+    --foreground: #020617;
+    --border: #e2e8f0;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --primary: #4f46e5; /* indigo-600 */
+    --primary-foreground: #ffffff;
+    --ring: 79 70 229; /* rgb value of indigo-600 */
+  }
+
+  .dark {
+    --background: #020617; /* slate-950 - deep premium dark */
+    --foreground: #f8fafc; /* slate-50 */
+    --border: #1e293b; /* slate-800 */
+    --card: #0f172a; /* slate-900 */
+    --card-foreground: #f8fafc;
+    --primary: #6366f1; /* indigo-500 */
+    --primary-foreground: #ffffff;
+    --ring: 99 102 241; /* rgb value of indigo-500 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-[color:var(--border)];
+  }
+  body {
+    @apply bg-[color:var(--background)] text-[color:var(--foreground)] antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
