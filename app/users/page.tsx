@@ -1,14 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Edit2, ShieldAlert } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { DataTable, Column } from "../../components/DataTable";
 import { User } from "../../types";
-import { useAuthStore } from "../../store/useAuthStore";
-import { isSuperAdmin, isAdminOrSuperAdmin } from "../../lib/auth";
+import { isAdminOrSuperAdmin } from "../../lib/auth";
 import { toast } from "sonner";
-import { Modal } from "../../components/Modal";
-import { ConfirmDialog } from "../../components/ConfirmDialog";
 
 import useSWR from "swr";
 import { fetcher, userApi } from "../../lib/services";
@@ -40,7 +37,7 @@ export default function UsersPage() {
     {
       header: "Actions",
       accessorKey: "actions",
-      cell: (item) => (
+      cell: () => (
         <div className="flex items-center space-x-2">
           {canManage && (
             <button

@@ -31,7 +31,7 @@ export default function TagsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { data, error, mutate, isLoading } = useSWR<Tag[]>(tagApi.getAll(), fetcher);
+  const { data, mutate, isLoading } = useSWR<Tag[]>(tagApi.getAll(), fetcher);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(tagSchema)
@@ -88,8 +88,9 @@ export default function TagsPage() {
       toast.success("Tag deleted");
       setIsConfirmOpen(false);
       setDeletingId(null);
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to delete tag");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to delete tag");
     }
   };
 
@@ -104,8 +105,9 @@ export default function TagsPage() {
       }
       mutate();
       setIsModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to save tag");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to save tag");
     }
   };
 

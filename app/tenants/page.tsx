@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Edit2, ExternalLink } from "lucide-react";
 import { DataTable, Column } from "../../components/DataTable";
 import { Tenant } from "../../types";
-import { useAuthStore } from "../../store/useAuthStore";
 import { isSuperAdmin } from "../../lib/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Modal } from "../../components/Modal";
-import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -33,14 +31,13 @@ export default function TenantsPage() {
   
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(tenantSchema)
   });
 
-  const { data, error, mutate, isLoading } = useSWR<Tenant[]>(
+  const { data, mutate, isLoading } = useSWR<Tenant[]>(
     isSuperAdmin() ? tenantApi.getAll() : null, 
     fetcher
   );
@@ -79,8 +76,9 @@ export default function TenantsPage() {
       }
       mutate();
       setIsModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to save tenant");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to save tenant");
     }
   };
 

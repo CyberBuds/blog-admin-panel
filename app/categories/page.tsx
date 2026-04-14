@@ -31,7 +31,7 @@ export default function CategoriesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const { data, error, mutate, isLoading } = useSWR<Category[]>(categoryApi.getAll(), fetcher);
+  const { data, mutate, isLoading } = useSWR<Category[]>(categoryApi.getAll(), fetcher);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema)
@@ -88,8 +88,9 @@ export default function CategoriesPage() {
       toast.success("Category deleted");
       setIsConfirmOpen(false);
       setDeletingId(null);
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to delete category");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to delete category");
     }
   };
 
@@ -104,8 +105,9 @@ export default function CategoriesPage() {
       }
       mutate();
       setIsModalOpen(false);
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to save category");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to save category");
     }
   };
 

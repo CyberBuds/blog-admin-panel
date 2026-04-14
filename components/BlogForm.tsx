@@ -15,7 +15,7 @@ const blogSchema = z.object({
   slug: z.string().min(2, "Slug is required"),
   categoryId: z.string().min(1, "Category is required"),
   content: z.string().min(10, "Content must be at least 10 characters"),
-  isPublished: z.boolean().default(false),
+  isPublished: z.boolean(),
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
@@ -35,6 +35,10 @@ export function BlogForm({ initialData }: BlogFormProps) {
       content: initialData.content,
       isPublished: initialData.isPublished,
     } : {
+      title: "",
+      slug: "",
+      categoryId: "",
+      content: "",
       isPublished: false,
     }
   });
@@ -48,8 +52,9 @@ export function BlogForm({ initialData }: BlogFormProps) {
       }
       toast.success(initialData ? "Blog updated successfully" : "Blog created successfully");
       router.push("/blogs");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "An error occurred");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "An error occurred");
     }
   };
 

@@ -22,7 +22,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
-  const { data: dashboardData, error } = useSWR(
+  const { data: dashboardData } = useSWR(
     isAuthenticated ? analyticsApi.getDashboard() : null, 
     fetcher
   );
@@ -95,7 +95,7 @@ export default function DashboardPage() {
             {!dashboardData?.recentActivity?.length ? (
               <div className="text-sm text-muted-foreground">No recent activity detected.</div>
             ) : (
-              dashboardData.recentActivity.map((activity: any, i: number) => (
+              dashboardData.recentActivity.map((activity: { title: string; description: string; timeAgo: string }, i: number) => (
                 <div key={i} className="flex items-center gap-4">
                   <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
                     <UserIcon className="h-4 w-4 text-muted-foreground" />

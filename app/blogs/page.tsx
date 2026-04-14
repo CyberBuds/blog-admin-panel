@@ -18,7 +18,7 @@ export default function BlogsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data, error, mutate, isLoading } = useSWR<Blog[]>(blogApi.getAll(), fetcher);
+  const { data, mutate, isLoading } = useSWR<Blog[]>(blogApi.getAll(), fetcher);
 
   const togglePublish = async (id: string, current: boolean) => {
     try {
@@ -29,8 +29,9 @@ export default function BlogsPage() {
       }
       mutate();
       toast.success(current ? "Blog unpublished" : "Blog published");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to update publish status");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to update publish status");
     }
   };
 
@@ -40,8 +41,9 @@ export default function BlogsPage() {
       await blogApi.delete(deletingId);
       mutate();
       toast.success("Blog deleted");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to delete blog");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to delete blog");
     } finally {
       setIsConfirmOpen(false);
       setDeletingId(null);

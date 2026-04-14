@@ -23,7 +23,7 @@ export default function CommentsPage() {
   const { data: blogs, isLoading: isBlogsLoading } = useSWR<Blog[]>(blogApi.getAll(), fetcher);
 
   // Fetch comments conditionally based on the chosen blog
-  const { data, error, mutate, isLoading } = useSWR<Comment[]>(
+  const { data, mutate, isLoading } = useSWR<Comment[]>(
     selectedBlogId ? commentApi.getByBlog(selectedBlogId) : null, 
     fetcher
   );
@@ -44,8 +44,9 @@ export default function CommentsPage() {
       }
       mutate();
       toast.success(isApproved ? "Comment approved" : "Comment rejected");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to alter comment status");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to alter comment status");
     }
   };
 
@@ -55,8 +56,9 @@ export default function CommentsPage() {
       await commentApi.delete(deletingId);
       mutate();
       toast.success("Comment deleted");
-    } catch (e: any) {
-      toast.error(e.response?.data?.message || "Failed to delete comment");
+    } catch (e: unknown) {
+      const error = e as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "Failed to delete comment");
     } finally {
       setIsConfirmOpen(false);
       setDeletingId(null);
