@@ -8,7 +8,6 @@ import { Blog } from "../../types";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 import useSWR from "swr";
 import { fetcher, blogApi } from "../../lib/services";
 
@@ -18,7 +17,11 @@ export default function BlogsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data, mutate, isLoading } = useSWR<Blog[]>(blogApi.getAll(), fetcher);
+  // ✅ Only ONE useSWR line
+  const { data: blogsResponse, mutate, isLoading } = useSWR<{ data: Blog[], totalCount: number }>(blogApi.getAll(), fetcher);
+  
+  // ✅ Only ONE filteredData line
+  const filteredData = (blogsResponse?.data || []).filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
 
   const togglePublish = async (id: string, current: boolean) => {
     try {
@@ -85,8 +88,6 @@ export default function BlogsPage() {
     }
   ];
 
-  const filteredData = (data || []).filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
-
   return (
     <div className="space-y-6">
       <div>
@@ -95,7 +96,7 @@ export default function BlogsPage() {
       </div>
 
       {isLoading ? (
-         <div className="flex justify-center p-8 text-muted-foreground animate-pulse">Loading blogs...</div>
+        <div className="flex justify-center p-8 text-muted-foreground animate-pulse">Loading blogs...</div>
       ) : (
         <DataTable
           data={filteredData}
