@@ -1,5 +1,6 @@
 "use client";
 
+import { User, Role } from '../../types';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,12 +34,28 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/login', data);
+      const response = await api.post('/auth/login', null, {
+  params: {
+    Email: data.email,    // Capital E ← this is the fix
+    password: data.password
+  }
+});
 
-      const { token, user } = response.data;
+       const token = response.data;
+  
+    // ✅ Decode JWT to extract user info
+    const payload = JSON.parse(atob(token.split('.')[1]));
 
-      login(token, user);
+    // ✅ Build User object matching your User interface exactly
+    const user: User = {
+      id: payload.sub || payload.email || data.email,
+      name: payload.name || data.email,
+      email: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || data.email,
+      role: payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] as Role,
+      createdAt: new Date().toISOString(),
+    };
 
+    login(token, user); // ✅ No more TypeScript error
       toast.success("Login successful");
       router.push("/");
     } catch (error: unknown) {
