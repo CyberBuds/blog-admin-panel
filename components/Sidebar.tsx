@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAuthStore } from "../store/useAuthStore";
 import { isSuperAdmin } from "../lib/auth";
 import { cn } from "../lib/utils";
+import { useState, useEffect } from "react"; // ✅ Add useState, useEffect
 import {
   LayoutDashboard,
   FileText,
@@ -20,7 +21,12 @@ import {
 export function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuthStore();
-  const superAdmin = isSuperAdmin();
+  // ✅ Fix — start false, update after client mounts
+  const [superAdmin, setSuperAdmin] = useState(false);
+   
+  useEffect(() => {
+    setSuperAdmin(isSuperAdmin());
+  }, []);
 
   const links = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
