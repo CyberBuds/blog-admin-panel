@@ -20,7 +20,7 @@ export default function CommentsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Fetch blogs to populate the dropdown
-  const { data: blogs, isLoading: isBlogsLoading } = useSWR<Blog[]>(blogApi.getAll(), fetcher);
+  const { data: blogsResponse, isLoading: isBlogsLoading } = useSWR<{ data: Blog[], totalCount: number }>(blogApi.getAll(), fetcher);
 
   // Fetch comments conditionally based on the chosen blog
   const { data, mutate, isLoading } = useSWR<Comment[]>(
@@ -29,11 +29,11 @@ export default function CommentsPage() {
   );
 
   // Auto-select the first blog if none is selected and blogs become available
-  useEffect(() => {
-    if (blogs && blogs.length > 0 && !selectedBlogId) {
-      setSelectedBlogId(blogs[0].id);
+ useEffect(() => {
+    if (blogsResponse?.data && blogsResponse.data.length > 0 && !selectedBlogId) {
+      setSelectedBlogId(blogsResponse.data[0].id);
     }
-  }, [blogs, selectedBlogId]);
+  }, [blogsResponse, selectedBlogId]);
 
   const toggleApproval = async (id: string, isApproved: boolean) => {
     try {
@@ -126,8 +126,9 @@ export default function CommentsPage() {
             disabled={isBlogsLoading}
             className="flex h-10 rounded-md border border-border bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary w-[250px]"
           >
-            <option value="">Choose a blog post...</option>
-            {blogs?.map((b) => (
+           <option value="">Choose a blog post...</option>
+            {/* ✅ Fixed — use blogsResponse.data not blogs */}
+            {blogsResponse?.data?.map((b) => (
               <option key={b.id} value={b.id}>{b.title}</option>
             ))}
           </select>
