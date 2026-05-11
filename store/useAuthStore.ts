@@ -21,7 +21,13 @@ export const useAuthStore = create<AuthState>()(
       activeTenantId: null,
       isAuthenticated: false,
 
-      login: (token, user) => set({ token, user, isAuthenticated: true }),
+      // ✅ Set activeTenantId from user's tenant during login
+login: (token, user) => set({ 
+  token, 
+  user, 
+  isAuthenticated: true,
+  activeTenantId: user.tenantId ?? null  // ← ADD THIS
+}), 
       
       logout: () => set({ token: null, user: null, isAuthenticated: false, activeTenantId: null }),
       

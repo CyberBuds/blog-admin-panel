@@ -5,8 +5,9 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  tenantId: string;
   avatarUrl?: string;
-  createdAt: string;
+  createdAt: string; 
 }
 
 export interface Tenant {
@@ -37,6 +38,7 @@ export interface Blog {
   authorId: string;
   categoryId: string;
   category?: Category;
+  tenantId: string;
   tags?: Tag[];
   isPublished: boolean;
   views: number;

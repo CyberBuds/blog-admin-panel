@@ -1,6 +1,9 @@
 import api from './api';
 
-export const fetcher = (url: string) => api.get(url).then(res => res.data);
+
+
+// ✅ Simple — api interceptor already adds TenantId automatically
+export const fetcher = (url: string) => api.get(url).then((res) => res.data);
 
 // Blog
 export const blogApi = {
@@ -38,6 +41,8 @@ export const userApi = {
 // Comments
 export const commentApi = {
   getByBlog: (blogId: string) => `/comments/blog/${blogId}`,
+getAdminComments: (blogId: string) => 
+  `/admin/comments?blogId=${blogId}&tenantId=tech-blog&page=1&pageSize=100`,
   approve: (id: string) => api.patch(`/admin/comments/${id}/approve`),
   reject: (id: string) => api.patch(`/admin/comments/${id}/reject`),
   delete: (id: string) => api.delete(`/comments/${id}`),
