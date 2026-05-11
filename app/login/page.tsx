@@ -53,6 +53,7 @@ export default function LoginPage() {
       email: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] || data.email,
       role: payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] as Role,
       createdAt: new Date().toISOString(),
+       tenantId: payload.tenantId || payload.TenantId || "",  // ✅ ADD THIS
     };
 
     login(token, user); // ✅ No more TypeScript error

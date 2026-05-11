@@ -19,10 +19,8 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    if (activeTenantId) {
-      config.headers.TenantId = activeTenantId;
-    }
+const tenantId = activeTenantId || "tech-blog";
+config.headers.TenantId = tenantId;
 
     return config;
   },
