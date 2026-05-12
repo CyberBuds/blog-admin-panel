@@ -13,7 +13,6 @@ import {
   Tags,
   Users,
   MessageSquare,
-  Settings,
   BarChart3,
   LogOut
 } from "lucide-react";
