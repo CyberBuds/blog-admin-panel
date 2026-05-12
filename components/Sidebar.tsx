@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAuthStore } from "../store/useAuthStore";
 import { isSuperAdmin } from "../lib/auth";
 import { cn } from "../lib/utils";
-import { useState, useEffect } from "react"; // ✅ Add useState, useEffect
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -13,7 +13,6 @@ import {
   Tags,
   Users,
   MessageSquare,
-  Settings,
   BarChart3,
   LogOut
 } from "lucide-react";
@@ -21,7 +20,6 @@ import {
 export function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuthStore();
-  // ✅ Fix — start false, update after client mounts
   const [superAdmin, setSuperAdmin] = useState(false);
    
   useEffect(() => {
@@ -36,7 +34,7 @@ export function Sidebar() {
     { name: "Users", href: "/users", icon: Users },
     { name: "Comments", href: "/comments", icon: MessageSquare },
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
-    ...(superAdmin ? [{ name: "Tenants", href: "/tenants", icon: Settings }] : []),
+    ...(superAdmin ? [{ name: "Tenants", href: "/tenants", icon: null }] : []), // ✅ icon removed
   ];
 
   return (
@@ -67,12 +65,14 @@ export function Sidebar() {
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 hover:translate-x-0.5"
               )}
             >
-              <Icon
-                className={cn(
-                  "h-5 w-5 transition-transform duration-200",
-                  !isActive && "group-hover:scale-110"
-                )}
-              />
+              {Icon && ( // ✅ only renders icon if it exists
+                <Icon
+                  className={cn(
+                    "h-5 w-5 transition-transform duration-200",
+                    !isActive && "group-hover:scale-110"
+                  )}
+                />
+              )}
               {link.name}
             </Link>
           );
