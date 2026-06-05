@@ -5,7 +5,7 @@ import { Plus, Edit2, Trash2 } from "lucide-react";
 import { DataTable, Column } from "../../components/DataTable";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { EditModal } from "../../components/EditModal";
-import { User } from "../../types";
+import { User, Role } from "../../types";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { fetcher, userApi } from "../../lib/services";
@@ -19,22 +19,17 @@ export default function UsersPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"Admin" | "User" | "SuperAdmin">("User");
+  const [role, setRole] = useState<Role>("User");
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // ✅ Use activeIdentifier for API calls
-    const { activeIdentifier, hasHydrated } = useTenantStore();
+  const { activeIdentifier, hasHydrated } = useTenantStore();
 
-  // ✅ STEP 2: Pass activeTenantId to API
   const { data, mutate, isLoading } = useSWR(
     hasHydrated ? userApi.getAll(activeIdentifier) : null,
     fetcher
   );
 
-  // ✅ STEP 3: THE FIX — Backend returns flat [] not { data: [] }
-  // MISTAKE WAS: (data?.data || []) → data.data is undefined → always empty []
-  // FIX IS:      check if data is already an array first
   const allUsers: User[] = Array.isArray(data) ? data : (data?.data || []);
 
   const filtered = allUsers.filter(u =>
@@ -98,6 +93,7 @@ export default function UsersPage() {
     const styles: Record<string, string> = {
       SuperAdmin: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
       Admin: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+      Editor: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
       User: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
     };
     return (
@@ -110,7 +106,6 @@ export default function UsersPage() {
   const columns: Column<User>[] = [
     {
       header: "Username", accessorKey: "username",
-      // ✅ Backend returns "username" not "name"
       cell: (item) => (
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-400">
@@ -184,10 +179,11 @@ export default function UsersPage() {
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 block">Role</label>
         <select
           value={role}
-          onChange={e => setRole(e.target.value as "Admin" | "User" | "SuperAdmin")}
+          onChange={e => setRole(e.target.value as Role)}
           className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="User">User</option>
+          <option value="Editor">Editor</option>
           <option value="Admin">Admin</option>
           <option value="SuperAdmin">SuperAdmin</option>
         </select>

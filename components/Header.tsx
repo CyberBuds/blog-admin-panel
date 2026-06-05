@@ -15,6 +15,7 @@ const INITIAL_NOTIFS: {
   id: number; title: string; desc: string; time: string; read: boolean;
 }[] = [];
 
+
 // ── Avatar ─────────────────────────────────────────────────────
 function Avatar({ name, initials, avatarUrl, size = 36 }: {
   name: string; initials: string; avatarUrl?: string | null; size?: number;
