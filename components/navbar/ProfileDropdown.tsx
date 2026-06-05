@@ -81,7 +81,9 @@ export default function ProfileDropdown() {
   }, []);
 
   if (!user) return null;
-
+ // ✅ Derive safe strings once
+  const name = user.name ?? "";
+  const initials = user.initials || name.slice(0, 2).toUpperCase() || "";
   return (
     <div className="relative" ref={ref}>
 
@@ -95,9 +97,9 @@ export default function ProfileDropdown() {
           transition-all duration-150 outline-none"
       >
         <Avatar
-          name={user.name}
+          name={name}
           avatarUrl={user.avatarUrl}
-          initials={user.initials || user.name.slice(0, 2).toUpperCase()}
+          initials={initials}
           size={30}
         />
         <div className="hidden md:block text-left leading-tight">
@@ -134,9 +136,9 @@ export default function ProfileDropdown() {
               border-b border-gray-100 dark:border-gray-800">
             <div className="relative">
               <Avatar
-                name={user.name}
+                name={name}
                 avatarUrl={user.avatarUrl}
-                initials={user.initials || user.name.slice(0, 2).toUpperCase()}
+                initials={initials}
                 size={44}
               />
               <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5

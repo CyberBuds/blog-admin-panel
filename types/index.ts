@@ -15,7 +15,7 @@ export interface Blog {
 }
 
 
-export type Role = "Admin" | "User" | "SuperAdmin";
+export type Role = "SuperAdmin" | "Admin" | "Editor" | "User";
  
 export interface User {
   id: string;
@@ -27,6 +27,7 @@ export interface User {
   tenantId?: string | null;
   updatedAt?: string | null;
   initials?: string;
+  avatarUrl?: string | null;  // ← add this
 }
 
 export interface Tenant {
