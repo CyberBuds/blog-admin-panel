@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Building2, ChevronDown, Check } from "lucide-react";
 import { useTenantStore } from "../../store/useTenantStore";
-import useSWR, { useSWRConfig } from "swr"; // ✅ import useSWRConfig
+import useSWR from "swr"; // ✅ import useSWRConfig
 import { fetcher, tenantApi } from "../../lib/services";
 import { TenantItem } from "../../types";
 
