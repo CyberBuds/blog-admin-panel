@@ -1,41 +1,45 @@
-import axios from 'axios';
-import { useAuthStore } from '../store/useAuthStore';
+import axios from "axios";
+import { useAuthStore } from "../store/useAuthStore";
+import { useTenantStore } from "../store/useTenantStore"; // ✅
 
-// Assuming base URL is configured via environment variables
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7196/api/v1';
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://localhost:7196/api/v1";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  // headers: {
-  //   'Content-Type': 'application/json',
-  //},
 });
 
-// Request interceptor to add token and tenantId
 api.interceptors.request.use(
   (config) => {
-    const { token, activeTenantId } = useAuthStore.getState();
-
+    const { token } = useAuthStore.getState();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-const tenantId = activeTenantId || "tech-blog";
-config.headers.TenantId = tenantId;
+
+    // ✅ Read from useTenantStore now
+    const { activeTenantId } = useTenantStore.getState();
+    if (activeTenantId) {
+      config.headers.TenantId = activeTenantId;
+    }
+
+//     // AFTER
+// const { activeIdentifier } = useTenantStore.getState();
+// if (activeIdentifier) {
+//   config.headers.TenantId = activeIdentifier;
+// }
 
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle unauthenticated responses
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear auth on 401
       useAuthStore.getState().logout();
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
       }
     }
     return Promise.reject(error);
