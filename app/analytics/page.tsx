@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, Legend
 } from "recharts";
 
+
 const trafficData = [
   { name: "Mon", views: 4000, visitors: 2400 },
   { name: "Tue", views: 3000, visitors: 1398 },
@@ -14,6 +15,7 @@ const trafficData = [
   { name: "Sat", views: 2390, visitors: 3800 },
   { name: "Sun", views: 3490, visitors: 4300 },
 ];
+
 
 const deviceData = [
   { name: "Desktop", value: 400 },

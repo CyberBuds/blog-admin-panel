@@ -3,16 +3,9 @@ import ProfileDropdown from "./ProfileDropdown";
 
 export default function Navbar() {
   return (
-    <nav className="w-full h-14 px-4 md:px-6
-        flex items-center justify-between
-        bg-white dark:bg-gray-950
-        border-b border-gray-200 dark:border-gray-800
-        shadow-sm sticky top-0 z-50">
-
+    <nav className="w-full h-14 px-4 md:px-6 flex items-center justify-between bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 shadow-sm sticky top-0 z-50">
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-lg
-            bg-gradient-to-br from-indigo-500 to-violet-600
-            flex items-center justify-center shadow-sm">
+        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm">
           <LayoutDashboard size={14} className="text-white" />
         </div>
         <span className="text-sm font-bold text-gray-900 dark:text-white tracking-tight hidden sm:block">

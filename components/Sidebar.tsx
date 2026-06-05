@@ -13,8 +13,10 @@ import {
   Tags,
   Users,
   MessageSquare,
+  Images,
   BarChart3,
-  LogOut
+  LogOut,
+  Building2,   // ✅ ADD THIS
 } from "lucide-react";
 
 export function Sidebar() {
@@ -33,8 +35,9 @@ export function Sidebar() {
     { name: "Tags", href: "/tags", icon: Tags },
     { name: "Users", href: "/users", icon: Users },
     { name: "Comments", href: "/comments", icon: MessageSquare },
+     { name: "Media", href: "/media", icon: Images },        // ✅ ADD THIS
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
-    ...(superAdmin ? [{ name: "Tenants", href: "/tenants", icon: null }] : []), // ✅ icon removed
+    ...(superAdmin ? [{ name: "Tenants", href: "/tenants", icon:  Building2}] : []), // ✅ icon removed
   ];
 
   return (

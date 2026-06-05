@@ -1,46 +1,40 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User } from '../types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User } from "../types";
 
 interface AuthState {
-  token: string | null;
   user: User | null;
-  activeTenantId: string | null;
+  token: string | null;
   isAuthenticated: boolean;
   login: (token: string, user: User) => void;
   logout: () => void;
-  setActiveTenantId: (tenantId: string | null) => void;
-  hasRole: (roles: User['role'][]) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
-      token: null,
+    (set) => ({
       user: null,
-      activeTenantId: null,
+      token: null,
       isAuthenticated: false,
 
-      // ✅ Set activeTenantId from user's tenant during login
-login: (token, user) => set({ 
-  token, 
-  user, 
-  isAuthenticated: true,
-  activeTenantId: user.tenantId ?? null  // ← ADD THIS
-}), 
-      
-      logout: () => set({ token: null, user: null, isAuthenticated: false, activeTenantId: null }),
-      
-      setActiveTenantId: (tenantId) => set({ activeTenantId: tenantId }),
-      
-      hasRole: (roles) => {
-        const { user } = get();
-        if (!user) return false;
-        return roles.includes(user.role);
-      },
+      login: (token: string, user: User) =>
+        set({
+          token,
+          user: {
+            ...user,
+            initials: user.name || ""
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .toUpperCase()
+              .slice(0, 2),
+          },
+          isAuthenticated: true,
+        }),
+
+      logout: () =>
+        set({ user: null, token: null, isAuthenticated: false }),
     }),
-    {
-      name: 'auth-storage',
-    }
+    { name: "auth-store" }
   )
 );

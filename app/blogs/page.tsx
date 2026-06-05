@@ -10,18 +10,34 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { fetcher, blogApi } from "../../lib/services";
+import { useTenantStore } from "../../store/useTenantStore"; // ✅ ADD THIS
+
+
 
 export default function BlogsPage() {
   const [search, setSearch] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
-
-  // ✅ Only ONE useSWR line
-  const { data: blogsResponse, mutate, isLoading } = useSWR<{ data: Blog[], totalCount: number }>(blogApi.getAll(), fetcher);
   
+// ✅ FIX: also read hasHydrated — prevents fetching before localStorage is read
+  const { activeIdentifier, hasHydrated } = useTenantStore();
+
+ const { data: blogsResponse, mutate, isLoading } = useSWR(
+    hasHydrated ? blogApi.getAll(activeIdentifier) : null,
+    fetcher
+  );
+  
+  
+  // ✅ FIX: Backend returns flat [] — handle both shapes
+  const allBlogs: Blog[] = Array.isArray(blogsResponse)
+    ? blogsResponse
+    : (blogsResponse?.data || []);
+
   // ✅ Only ONE filteredData line
-  const filteredData = (blogsResponse?.data || []).filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
+  const filteredData = allBlogs.filter(b =>
+    b.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   const togglePublish = async (id: string, current: boolean) => {
     try {

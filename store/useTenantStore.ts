@@ -1,26 +1,38 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Tenant } from '../types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { Tenant } from "../types";
 
 interface TenantState {
   tenants: Tenant[];
   activeTenantId: string | null;
+  activeIdentifier: string | null;  
+  hasHydrated: boolean; // ← add
+  setHasHydrated: (v: boolean) => void; // ← add
   setActiveTenantId: (id: string | null) => void;
+  setActiveIdentifier: (identifier: string | null) => void; // ✅ NEW
   setTenants: (tenants: Tenant[]) => void;
+  reset: () => void;
 }
 
 export const useTenantStore = create<TenantState>()(
   persist(
     (set) => ({
-      tenants: [
-        { id: 'tech-blog', name: 'Tech Blog', domain: 'techblog.com', isActive: true, createdAt: '2024-01-01' },
-        { id: 'tenant-2', name: 'Acme Corp', domain: 'acme.com', isActive: true, createdAt: '2024-02-01' },
-        { id: 'tenant-3', name: 'NewsDaily', domain: 'newsdaily.com', isActive: true, createdAt: '2024-03-01' },
-      ],
-      activeTenantId: 'tech-blog',  // ← set as default active
+      tenants: [],
+      activeTenantId: null,
+      activeIdentifier: null,
+      hasHydrated: false, // ← add
+      setHasHydrated: (v) => set({ hasHydrated: v }), // ← add
       setActiveTenantId: (id) => set({ activeTenantId: id }),
+      setActiveIdentifier: (identifier) => set({ activeIdentifier: identifier }), // ✅ NEW
       setTenants: (tenants) => set({ tenants }),
+           // ✅ FIX: reset now clears activeIdentifier too — prevents stale tenant on logout
+      reset: () => set({ tenants: [], activeTenantId: null, activeIdentifier: null }),
     }),
-    { name: 'tenant-store' }
+    { name: "tenant-store",
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true); // ← fires after localStorage is read
+      },
+    }
+    
   )
 );
