@@ -40,27 +40,27 @@ const { data } = useSWR(tenantApi.getAll(), fetcher);
   const selectedTenant = tenants.find((t) => t.id === activeTenantId) ?? null;
 
     // ✅ Single handler that sets both UUID (for display) and identifier (for API)
-  const handleSelectTenant = (tenant: TenantItem) => {
+  // const handleSelectTenant = (tenant: TenantItem) => {
     
-    if (cache instanceof Map) cache.clear(); // ← add this
-    setActiveTenantId(tenant.id);
-    setActiveIdentifier(tenant.identifier || null); // ✅ sends "tech-blog" not UUID
-    setOpen(false);
-        mutateAll(                  // ← invalidates every SWR key in the app
-      () => true,               // ← match ALL keys
-      undefined,                // ← no optimistic data
-      { revalidate: true }      // ← force fresh fetch on next visit
-    );
-  };
+  //   if (cache instanceof Map) cache.clear(); // ← add this
+  //   setActiveTenantId(tenant.id);
+  //   setActiveIdentifier(tenant.identifier || null); // ✅ sends "tech-blog" not UUID
+  //   setOpen(false);
+  //       mutateAll(                  // ← invalidates every SWR key in the app
+  //     () => true,               // ← match ALL keys
+  //     undefined,                // ← no optimistic data
+  //     { revalidate: true }      // ← force fresh fetch on next visit
+  //   );
+  // };
  
-  const handleSelectAll = () => {
+  // const handleSelectAll = () => {
     
-    if (cache instanceof Map) cache.clear(); // ← add this
-    setActiveTenantId(null);
-    setActiveIdentifier(null); // ✅ clear identifier → API gets no filter
-    setOpen(false);
-    mutateAll(() => true, undefined, { revalidate: true });
-  };
+  //   if (cache instanceof Map) cache.clear(); // ← add this
+  //   setActiveTenantId(null);
+  //   setActiveIdentifier(null); // ✅ clear identifier → API gets no filter
+  //   setOpen(false);
+  //   mutateAll(() => true, undefined, { revalidate: true });
+  // };
   
   // Close dropdown on outside click
   useEffect(() => {
