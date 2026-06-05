@@ -9,19 +9,18 @@ import { TenantItem } from "../../types";
 
 export default function WorkspaceSwitcher() {
   
-  const { cache } = useSWRConfig(); // ← add this
+  // const { cache } = useSWRConfig(); // ← add this
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // ✅ FIX 1: Use correct store methods — setActiveTenantId (not setSelectedTenant)
 const { activeTenantId, 
         setActiveTenantId, 
-        setActiveIdentifier, // ✅ NEW
         setTenants,
       } = useTenantStore();
 
     
-const { mutate: mutateAll } = useSWRConfig();  
+// const { mutate: mutateAll } = useSWRConfig();  
 const { data } = useSWR(tenantApi.getAll(), fetcher);
 
 // ✅ FIX: Backend returns flat [] not { data: [] }
