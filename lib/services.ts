@@ -1,6 +1,9 @@
 import api from "./api";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || "https://localhost:7196/api/v1";
+// const BASE = process.env.NEXT_PUBLIC_API_URL || "https://localhost:7196/api/v1";
+const BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://blogservice-api.onrender.com/api/v1";
 
 // ✅ Handles both {data:[]} and direct [] responses
 export const fetcher = (url: string) => api.get(url).then((r) => r.data);

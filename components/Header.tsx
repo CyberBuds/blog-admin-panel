@@ -109,6 +109,13 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  // PASTE STEP 2 HERE:
+  const handleSignOut = () => {
+    setProfileOpen(false);
+    // Point directly to the central logout callback portal
+    window.location.href = "http://localhost:3000/auth/logout";
+  };
+
   if (!mounted) return (
     <header className="h-16 flex items-center justify-end px-6 bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-30" />
   );
