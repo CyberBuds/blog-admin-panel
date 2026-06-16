@@ -8,31 +8,24 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { fetcher, analyticsApi } from "../lib/services";
 
 export default function DashboardPage() {
-  const { user, isAuthenticated } = useAuthStore();
-  const { activeTenantId, tenants } = useTenantStore(); // ✅ use activeTenantId 
-  const router = useRouter();
+  const { user } = useAuthStore();
+  const { activeTenantId, tenants } = useTenantStore();
   const [mounted, setMounted] = useState(false);
 
-  // ✅ Derive selectedTenant from activeTenantId + tenants array
   const selectedTenant = tenants.find(t => t.id === activeTenantId) ?? null;
 
-  const apiUrl = isAuthenticated
-    ? analyticsApi.getDashboard(activeTenantId) // ✅ pass activeTenantId
-    : null;
-
+  const apiUrl = analyticsApi.getDashboard(activeTenantId);
   const { data: dashboardData, isLoading } = useSWR(apiUrl, fetcher);
 
   useEffect(() => {
     setMounted(true);
-    if (!isAuthenticated) router.push("/login");
-  }, [isAuthenticated, router]);
+  }, []);
 
-  if (!mounted || !isAuthenticated) return null;
+  if (!mounted) return null;
 
   const stats = [
     { title: "Total Blogs", value: dashboardData?.totalBlogs ?? "—", icon: FileText },

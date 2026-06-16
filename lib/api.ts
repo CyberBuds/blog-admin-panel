@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../store/useAuthStore";
-import { useTenantStore } from "../store/useTenantStore"; // ✅
+import { useTenantStore } from "../store/useTenantStore";
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://localhost:7196/api/v1";
@@ -15,32 +15,27 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // ✅ Read from useTenantStore now
     const { activeTenantId } = useTenantStore.getState();
     if (activeTenantId) {
       config.headers.TenantId = activeTenantId;
     }
-
-//     // AFTER
-// const { activeIdentifier } = useTenantStore.getState();
-// if (activeIdentifier) {
-//   config.headers.TenantId = activeIdentifier;
-// }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
+// ✅ Flag to prevent multiple redirects
+let isRedirecting = false;
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isRedirecting) {
+      isRedirecting = true;
       useAuthStore.getState().logout();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
+      // ✅ Do NOT reload or redirect — just logout and let the UI handle it
+      // Reset flag after a delay
+      setTimeout(() => { isRedirecting = false; }, 3000);
     }
     return Promise.reject(error);
   }

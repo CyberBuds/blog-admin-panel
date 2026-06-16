@@ -1,17 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isLoginPage = pathname === "/login";
-
-  if (isLoginPage) {
-    return <main className="min-h-screen bg-background">{children}</main>;
-  }
-
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar />
