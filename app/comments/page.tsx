@@ -19,7 +19,7 @@ export default function CommentsPage() {
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
   const [blogId, setBlogId] = useState("");
-  //  const [email, setEmail] = useState(""); // ✅ added email state
+  const [email, setEmail] = useState(""); // ✅ added email state
   const [saving, setSaving] = useState(false);
   // Blog filter — null means "not selected yet"
   const [selectedBlogId, setSelectedBlogId] = useState<string>("all");
