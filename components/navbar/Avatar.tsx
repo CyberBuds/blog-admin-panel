@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 
 interface AvatarProps {
   name: string;
@@ -13,9 +14,11 @@ export default function Avatar({ name, avatarUrl, initials, size = 36 }: AvatarP
 
   if (avatarUrl && !imgError) {
     return (
-      <img
+      <Image
         src={avatarUrl}
         alt={name}
+        width={size}
+        height={size}
         onError={() => setImgError(true)}
         className="rounded-full object-cover ring-2 ring-indigo-500/30 ring-offset-1 dark:ring-offset-gray-950"
         style={{ width: size, height: size }}

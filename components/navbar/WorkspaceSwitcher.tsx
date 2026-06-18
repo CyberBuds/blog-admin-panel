@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { Building2, ChevronDown, Check } from "lucide-react";
 import { useTenantStore } from "../../store/useTenantStore";
 import useSWR from "swr"; // ✅ import useSWRConfig
@@ -8,7 +8,6 @@ import { fetcher, tenantApi } from "../../lib/services";
 import { TenantItem } from "../../types";
 
 export default function WorkspaceSwitcher() {
-  
   // const { cache } = useSWRConfig(); // ← add this
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -18,17 +17,16 @@ const { activeTenantId,
         setActiveTenantId, 
         setTenants,
       } = useTenantStore();
-
     
 // const { mutate: mutateAll } = useSWRConfig();  
 const { data } = useSWR(tenantApi.getAll(), fetcher);
 
-// ✅ FIX: Backend returns flat [] not { data: [] }
-  const tenants: TenantItem[] = Array.isArray(data)
-    ? data
-    : (data?.data || []);
+// ✅ FIX: Memoize 'tenants' so it retains its reference across renders
+  const tenants: TenantItem[] = useMemo(() => {
+    return Array.isArray(data) ? data : (data?.data || []);
+  }, [data]);
 
-  // ✅ FIX 3: Sync fetched tenants into the store so Dashboard can resolve tenant name
+ // ✅ Now this will only trigger when the actual data contents update
   useEffect(() => {
     if (tenants.length > 0) {
       setTenants(tenants);
