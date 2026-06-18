@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { DataTable, Column } from "../../components/DataTable";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
@@ -26,9 +26,10 @@ export default function MediaPage() {
 
   // ── Blog list for dropdown ──────────────────────────────────────────────
   const { data: blogsResponse } = useSWR(blogApi.getAll(activeTenantId), fetcher);
-  const blogs: Blog[] = Array.isArray(blogsResponse)
-    ? blogsResponse
-    : (blogsResponse?.data || []);
+  const blogs: Blog[] = useMemo(
+    () => (Array.isArray(blogsResponse) ? blogsResponse : (blogsResponse?.data || [])),
+    [blogsResponse]
+  );
 
   // ── Media list ──────────────────────────────────────────────────────────
   const [selectedBlogId, setSelectedBlogId] = useState<string>("all");
@@ -74,7 +75,7 @@ export default function MediaPage() {
     if (blogs.length > 0 && !modalBlogId) {
       setModalBlogId(blogs[0].id);
     }
-  }, [blogs]);
+  }, [blogs, modalBlogId]);
 
   const handleCreate = async () => {
     if (!fileName.trim()) { toast.error("File name is required."); return; }

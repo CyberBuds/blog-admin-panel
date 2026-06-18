@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Plus, Trash2, CheckCircle, XCircle, ChevronDown } from "lucide-react";
 import { DataTable, Column } from "../../components/DataTable";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
@@ -19,7 +19,7 @@ export default function CommentsPage() {
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
   const [blogId, setBlogId] = useState("");
-  const [email, setEmail] = useState(""); // ✅ added email state
+  //  const [email, setEmail] = useState(""); // ✅ added email state
   const [saving, setSaving] = useState(false);
   // Blog filter — null means "not selected yet"
   const [selectedBlogId, setSelectedBlogId] = useState<string>("all");
@@ -34,9 +34,10 @@ const { activeTenantId, hasHydrated } = useTenantStore();
   const { data: blogsResponse } = useSWR(
     blogApi.getAll(activeTenantId), fetcher
   );
-  const blogs: Blog[] = Array.isArray(blogsResponse)
-   ? blogsResponse
-    : (blogsResponse?.data || []); 
+  const blogs: Blog[] = useMemo(
+    () => (Array.isArray(blogsResponse) ? blogsResponse : (blogsResponse?.data || [])),
+    [blogsResponse]
+  );
 
   // ✅ FIX: Auto-select first blog when blogs load
   // Backend REQUIRES blogId — never send request without it

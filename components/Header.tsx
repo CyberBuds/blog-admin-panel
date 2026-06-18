@@ -23,6 +23,7 @@ function Avatar({ name, initials, avatarUrl, size = 36 }: {
   const [imgError, setImgError] = useState(false);
   if (avatarUrl && !imgError) {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={avatarUrl}
         alt={name}
@@ -271,7 +272,7 @@ export function Header() {
 
               <div className="px-2 pb-2">
                 <div className="border-t border-dashed border-gray-200 dark:border-gray-700 my-1" />
-                <MenuItem icon={LogOut} label="Sign Out" variant="danger" onClick={() => setProfileOpen(false)} />
+                <MenuItem icon={LogOut} label="Sign Out" variant="danger" onClick={handleSignOut} />
               </div>
             </div>
           </div>
