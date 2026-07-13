@@ -79,8 +79,9 @@ export function Sidebar() {
       <div className="p-4 border-t border-border/60">
         <button
           onClick={() => {
-           process.env.NEXT_PUBLIC_BLOGOPS_URL ?? "http://localhost:3000";
-          }}
+  window.location.href =
+    process.env.NEXT_PUBLIC_BLOGOPS_URL || "http://localhost:3000";
+}}
           className="flex w-full items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100 transition-all duration-200 hover:translate-x-0.5"
         >
           <LayoutDashboard className="h-5 w-5" />
