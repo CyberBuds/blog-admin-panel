@@ -114,7 +114,7 @@ export function Header() {
   const handleSignOut = () => {
     setProfileOpen(false);
     // Point directly to the central logout callback portal
-    window.location.href = "http://localhost:3000/auth/logout";
+    window.location.href = `${process.env.NEXT_PUBLIC_BLOGOPS_URL}/auth/logout`;
   };
 
   if (!mounted) return (
