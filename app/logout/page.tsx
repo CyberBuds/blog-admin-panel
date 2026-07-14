@@ -11,6 +11,8 @@ export default function LogoutPage() {
     localStorage.removeItem("email");
 
     localStorage.setItem("force-logout", Date.now().toString());
+
+    window.close();
   }, []);
 
   return (
