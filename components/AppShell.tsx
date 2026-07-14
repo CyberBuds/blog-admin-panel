@@ -1,9 +1,20 @@
 "use client";
 
+import { useEffect } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === "force-logout") {
+        window.location.reload();
+      }
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar />
