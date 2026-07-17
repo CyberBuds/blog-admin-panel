@@ -73,7 +73,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
     e.preventDefault(); 
   
     // ✅ Read fresh from store at submit time — bypasses hydration timing issue
-  const currentUser = useAuthStore.getState().user;
+  const { user: currentUser, token, isAuthenticated } = useAuthStore.getState();
     if (!title || title.length < 5) {
       toast.error("Title must be at least 5 characters");
       return;
@@ -84,7 +84,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
     }
      
     
-    if (!currentUser?.id) {
+    if (!token || !isAuthenticated) {
       toast.error("Session expired. Please log in again.");
       return;
     }
@@ -97,7 +97,7 @@ export function BlogForm({ initialData }: BlogFormProps) {
       const payload: Record<string, unknown> = {
         title,
         content,
-        authorId: currentUser.id,
+        authorId:currentUser?.id,
         categoryIds: selectedCategoryIds,
         tagIds: selectedTagIds,
       };
