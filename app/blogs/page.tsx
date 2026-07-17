@@ -24,7 +24,7 @@ export default function BlogsPage() {
   const { activeIdentifier, hasHydrated } = useTenantStore();
 
  const { data: blogsResponse, mutate, isLoading } = useSWR(
-    hasHydrated ? blogApi.getAll(activeIdentifier) : null,
+    hasHydrated && activeIdentifier ? blogApi.getAll(activeIdentifier) : null,
     fetcher
   );
   
@@ -111,7 +111,12 @@ export default function BlogsPage() {
         <p className="text-muted-foreground">Manage your blog posts here.</p>
       </div>
 
-      {isLoading ? (
+      {!activeIdentifier ? (
+        <div className="flex flex-col items-center justify-center gap-2 p-12 text-center border rounded-md text-muted-foreground">
+          <p className="font-medium">Select a particular tenant to view blogs</p>
+          <p className="text-sm">Choose a workspace from the switcher above.</p>
+        </div>
+      ) : isLoading ? (
         <div className="flex justify-center p-8 text-muted-foreground animate-pulse">Loading blogs...</div>
       ) : (
         <DataTable

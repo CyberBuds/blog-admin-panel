@@ -15,6 +15,7 @@ export default function WorkspaceSwitcher() {
   // ✅ FIX 1: Use correct store methods — setActiveTenantId (not setSelectedTenant)
 const { activeTenantId, 
         setActiveTenantId, 
+        setActiveIdentifier,
         setTenants,
       } = useTenantStore();
     
@@ -117,7 +118,7 @@ const { data } = useSWR(tenantApi.getAll(), fetcher);
 
             {/* ✅ All Workspaces option — highlighted when activeTenantId is null */}
             <button
-              onClick={() => { setActiveTenantId(null); setOpen(false); }}
+              onClick={() => { setActiveTenantId(null); setActiveIdentifier(null); setOpen(false); }}
               className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg
                 text-sm transition-colors duration-100 text-left
                 ${activeTenantId === null
@@ -142,7 +143,7 @@ const { data } = useSWR(tenantApi.getAll(), fetcher);
             {tenants.map((tenant) => (
               <button
                 key={tenant.id}
-                onClick={() => { setActiveTenantId(tenant.id); setOpen(false); }}
+                onClick={() => { setActiveTenantId(tenant.id); setActiveIdentifier(tenant.identifier || tenant.domain || tenant.slug || null); setOpen(false); }}
                 className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg
                   text-sm transition-colors duration-100 text-left
                   ${activeTenantId === tenant.id
