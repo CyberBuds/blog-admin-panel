@@ -6,10 +6,12 @@ interface TenantState {
   tenants: Tenant[];
   activeTenantId: string | null;
   activeIdentifier: string | null;  
+  activeApiKey: string | null; // ✅ NEW: tenant-specific x-api-key
   hasHydrated: boolean; // ← add
   setHasHydrated: (v: boolean) => void; // ← add
   setActiveTenantId: (id: string | null) => void;
   setActiveIdentifier: (identifier: string | null) => void; // ✅ NEW
+  setActiveApiKey: (apiKey: string | null) => void; // ✅ NEW
   setTenants: (tenants: Tenant[]) => void;
   reset: () => void;
 }
@@ -20,13 +22,15 @@ export const useTenantStore = create<TenantState>()(
       tenants: [],
       activeTenantId: null,
       activeIdentifier: null,
+      activeApiKey: null,
       hasHydrated: false, // ← add
       setHasHydrated: (v) => set({ hasHydrated: v }), // ← add
       setActiveTenantId: (id) => set({ activeTenantId: id }),
       setActiveIdentifier: (identifier) => set({ activeIdentifier: identifier }), // ✅ NEW
+      setActiveApiKey: (apiKey) => set({ activeApiKey: apiKey }), // ✅ NEW
       setTenants: (tenants) => set({ tenants }),
            // ✅ FIX: reset now clears activeIdentifier too — prevents stale tenant on logout
-      reset: () => set({ tenants: [], activeTenantId: null, activeIdentifier: null }),
+      reset: () => set({ tenants: [], activeTenantId: null, activeIdentifier: null, activeApiKey: null }),
     }),
     { name: "tenant-store",
       onRehydrateStorage: () => (state) => {

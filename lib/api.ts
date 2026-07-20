@@ -12,12 +12,16 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const { token } = useAuthStore.getState();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const authToken = token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
     }
-    const { activeTenantId } = useTenantStore.getState();
+    const { activeTenantId, activeApiKey } = useTenantStore.getState();
     if (activeTenantId) {
       config.headers.TenantId = activeTenantId;
+    }
+    if (activeApiKey) {
+      config.headers["x-api-key"] = activeApiKey;
     }
     return config;
   },
