@@ -45,6 +45,24 @@ function decodeJwtRole(token: string): Role {
   }
 }
 
+function decodeJwtEmail(token: string): string {
+  try {
+    const payload = token.split(".")[1];
+    const json = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return (
+      json.email ||
+      json["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ||
+      json.name ||
+      json.unique_name ||
+      ""
+    );
+  } catch {
+    return "";
+  }
+}
+
 export default function AuthCallback() {
   const router = useRouter();
   const { login } = useAuthStore();
@@ -59,14 +77,16 @@ export default function AuthCallback() {
       return;
     }
 
+    const resolvedEmail = email || decodeJwtEmail(token);
+
     // ✅ Call Zustand login so isAuthenticated becomes true
     login(token, {
       id: decodeJwtUserId(token),
-      email: email ?? "",
+      email: resolvedEmail,
       role: decodeJwtRole(token),
       createdAt: new Date().toISOString(),
-      name: email ?? "",
-      initials: email ? email[0].toUpperCase() : "A",
+      name: resolvedEmail,
+      initials: resolvedEmail ? resolvedEmail[0].toUpperCase() : "A",
     });
 
     localStorage.setItem("token", token);
