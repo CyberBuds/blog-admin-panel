@@ -6,6 +6,7 @@ import { useTenantStore } from "../../store/useTenantStore";
 import useSWR from "swr"; // ✅ import useSWRConfig
 import { fetcher, tenantApi } from "../../lib/services";
 import { TenantItem } from "../../types";
+import api from "../../lib/api";
 
 export default function WorkspaceSwitcher() {
   // const { cache } = useSWRConfig(); // ← add this
@@ -16,8 +17,21 @@ export default function WorkspaceSwitcher() {
 const { activeTenantId, 
         setActiveTenantId, 
         setActiveIdentifier,
+        setActiveApiKey,
         setTenants,
       } = useTenantStore();
+
+  // ✅ NEW: fetch the tenant's active api key so requests can send x-api-key
+  const loadApiKeyForTenant = async (tenantId: string) => {
+    try {
+      const res = await api.get("/apikeys", { headers: { TenantId: tenantId } });
+      const keys = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      const active = keys.find((k: any) => k.isActive) || keys[0];
+      setActiveApiKey(active?.key || null);
+    } catch {
+      setActiveApiKey(null);
+    }
+  };
     
 // const { mutate: mutateAll } = useSWRConfig();  
 const { data } = useSWR(tenantApi.getAll(), fetcher);
@@ -118,7 +132,7 @@ const { data } = useSWR(tenantApi.getAll(), fetcher);
 
             {/* ✅ All Workspaces option — highlighted when activeTenantId is null */}
             <button
-              onClick={() => { setActiveTenantId(null); setActiveIdentifier(null); setOpen(false); }}
+              onClick={() => { setActiveTenantId(null); setActiveIdentifier(null); setActiveApiKey(null); setOpen(false); }}
               className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg
                 text-sm transition-colors duration-100 text-left
                 ${activeTenantId === null
@@ -143,7 +157,7 @@ const { data } = useSWR(tenantApi.getAll(), fetcher);
             {tenants.map((tenant) => (
               <button
                 key={tenant.id}
-                onClick={() => { setActiveTenantId(tenant.id); setActiveIdentifier(tenant.identifier || tenant.domain || tenant.slug || null); setOpen(false); }}
+                onClick={() => { setActiveTenantId(tenant.id); setActiveIdentifier(tenant.identifier || tenant.domain || tenant.slug || null); loadApiKeyForTenant(tenant.id); setOpen(false); }}
                 className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg
                   text-sm transition-colors duration-100 text-left
                   ${activeTenantId === tenant.id

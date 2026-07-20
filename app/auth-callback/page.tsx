@@ -25,6 +25,26 @@ function decodeJwtUserId(token: string): string {
   }
 }
 
+import { Role } from "../../types";
+
+function decodeJwtRole(token: string): Role {
+  try {
+    const payload = token.split(".")[1];
+    const json = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    const role =
+      json.role ||
+      json["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role"] ||
+      "User";
+    return (["SuperAdmin", "Admin", "Editor", "User"] as const).includes(role)
+      ? (role as Role)
+      : "User";
+  } catch {
+    return "User";
+  }
+}
+
 export default function AuthCallback() {
   const router = useRouter();
   const { login } = useAuthStore();
@@ -43,7 +63,7 @@ export default function AuthCallback() {
     login(token, {
       id: decodeJwtUserId(token),
       email: email ?? "",
-      role: "SuperAdmin",
+      role: decodeJwtRole(token),
       createdAt: new Date().toISOString(),
       name: email ?? "",
       initials: email ? email[0].toUpperCase() : "A",
