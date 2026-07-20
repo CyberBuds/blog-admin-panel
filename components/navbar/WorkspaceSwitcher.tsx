@@ -25,8 +25,8 @@ const { activeTenantId,
   const loadApiKeyForTenant = async (tenantId: string) => {
     try {
       const res = await api.get("/apikeys", { headers: { TenantId: tenantId } });
-      const keys = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      const active = keys.find((k: any) => k.isActive) || keys[0];
+      const keys: { key: string; isActive?: boolean }[] = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      const active = keys.find((k) => k.isActive) || keys[0];
       setActiveApiKey(active?.key || null);
     } catch {
       setActiveApiKey(null);
